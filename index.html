@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RecipeRatio — Modern Food & Recipe Studio</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <div class="app-shell">
+    <!-- Top Navigation Bar -->
+    <header class="studio-nav">
+      <a href="#" class="brand-group">
+        <div class="brand-mark" aria-hidden="true">R</div>
+        <div class="brand-title">Recipe<span>Ratio</span> Studio</div>
+      </a>
+      <div class="nav-actions">
+        <div class="nav-pill">
+          <span class="pulse-dot" aria-hidden="true"></span>
+          <span>Local &amp; Offline Ready</span>
+        </div>
+        <!-- Light / Dark Mode Toggle Button -->
+        <button type="button" id="themeToggleBtn" class="theme-toggle-btn" aria-label="Switch between light and dark theme">
+          <span id="themeToggleIcon" class="theme-toggle-icon" aria-hidden="true"></span>
+          <span id="themeToggleLabel" class="theme-toggle-label">Dark Mode</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-banner">
+      <div class="hero-content">
+        <div class="hero-kicker-tags">
+          <span class="kicker-label kicker-accent">YOUR KITCHEN, YOUR RULES</span>
+          <span class="kicker-label">Smart Recipe Scaling</span>
+        </div>
+        <h1 class="hero-headline">Good food.<br><em>Perfect portions.</em></h1>
+        <p class="hero-subtitle">
+          Scale every recipe effortlessly, from a cozy dinner for two to a feast for ten. Maintain flavor balance and precision every single time.
+        </p>
+        <a href="#scaler-workspace" class="hero-cta-btn">
+          <span>Start Scaling</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <polyline points="19 12 12 19 5 12"></polyline>
+          </svg>
+        </a>
+      </div>
+      <div class="hero-media-panel">
+        <img 
+          src="https://images.unsplash.com/photo-1546549032-9571cd6b27df?auto=format&fit=crop&w=1000&q=80" 
+          alt="Fresh culinary pasta with herbs and tomatoes" 
+          class="hero-image"
+          loading="lazy"
+          onerror="this.style.display='none'"
+        />
+        <div class="hero-badge-overlay">
+          <div class="hero-badge-icon" aria-hidden="true">&#10003;</div>
+          <div class="hero-badge-text">100% Mathematical<br>Ratio Precision</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Workspace -->
+    <main id="scaler-workspace" class="dashboard-grid">
+      <!-- Left Column: The Recipe Scaler Canvas -->
+      <section class="card" aria-labelledby="recipe-canvas-heading">
+        <div class="card-masthead">
+          <h2 id="recipe-canvas-heading" class="card-title">
+            <span>Recipe Canvas</span>
+          </h2>
+          <span class="card-chip">Original Specs</span>
+        </div>
+
+        <div id="globalErrorBanner" class="global-error-box" role="alert" aria-live="polite">
+          Please check the highlighted fields below. All servings and ingredients must be positive values.
+        </div>
+
+        <form id="recipeForm" novalidate>
+          <!-- Dish Name -->
+          <div class="form-group">
+            <label for="dishName">Dish Name <span class="required-star" aria-hidden="true">*</span></label>
+            <input 
+              type="text" 
+              id="dishName" 
+              name="dishName" 
+              placeholder="e.g. Handmade Tagliatelle with Ragu" 
+              autocomplete="off"
+              required 
+            />
+            <div id="dishNameError" class="field-error-msg" role="alert">Dish name is required.</div>
+          </div>
+
+          <!-- Servings Interactive Module -->
+          <div class="servings-interactive-pod">
+            <div class="servings-pod-title">
+              <span>Serving Conversion</span>
+              <span id="liveMultiplierBadge" class="multiplier-live-preview">1× Recipe</span>
+            </div>
+
+            <div class="servings-two-column">
+              <!-- Original Servings -->
+              <div class="form-group" style="margin-bottom:0;">
+                <label for="originalServings">Original Servings <span class="required-star" aria-hidden="true">*</span></label>
+                <input 
+                  type="number" 
+                  id="originalServings" 
+                  name="originalServings" 
+                  step="any" 
+                  min="0.0001" 
+                  placeholder="e.g. 4" 
+                  required 
+                />
+                <div id="originalServingsError" class="field-error-msg" role="alert">Enter a positive number (> 0).</div>
+              </div>
+
+              <!-- Desired Servings with Interactive Steppers -->
+              <div class="form-group" style="margin-bottom:0;">
+                <label for="desiredServings">Desired Servings <span class="required-star" aria-hidden="true">*</span></label>
+                <div class="stepper-control">
+                  <button type="button" id="btnStepDown" class="stepper-btn" aria-label="Decrease desired servings">&minus;</button>
+                  <input 
+                    type="number" 
+                    id="desiredServings" 
+                    name="desiredServings" 
+                    step="any" 
+                    min="0.0001" 
+                    placeholder="e.g. 6" 
+                    required 
+                  />
+                  <button type="button" id="btnStepUp" class="stepper-btn" aria-label="Increase desired servings">&plus;</button>
+                </div>
+                <div id="desiredServingsError" class="field-error-msg" role="alert">Enter a positive number (> 0).</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Ingredients List Section -->
+          <div class="ingredients-header-row">
+            <div class="ingredients-subhead">Ingredients &amp; Quantities</div>
+            <button type="button" id="btnAddIngredient" class="btn-add-ingredient">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Add Ingredient</span>
+            </button>
+          </div>
+
+          <fieldset class="ingredients-fieldset" style="border:none; padding:0; margin:0;">
+            <legend class="sr-only">Ingredients and amounts</legend>
+            <!-- Dynamic Rows Injected Here -->
+            <div id="ingredientsContainer" class="ingredients-container"></div>
+          </fieldset>
+
+          <button type="submit" id="scaleBtn" class="btn-scale-main">
+            <span>Scale My Recipe</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </form>
+      </section>
+
+      <!-- Right Column: Visual Results + Supporting Dashboard Cards -->
+      <div>
+        <!-- Scaled Recipe Result Card -->
+        <section class="card-results" aria-labelledby="scaled-recipe-heading">
+          <div class="card-masthead">
+            <h2 id="scaled-recipe-heading" class="card-title">
+              <span>Your Scaled Recipe</span>
+            </h2>
+            <span id="resultBadge" class="card-chip">Target Yield</span>
+          </div>
+
+          <!-- Outdated inputs drift notice -->
+          <div id="outdatedNotice" class="outdated-banner" role="status">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>Inputs changed. Hit &ldquo;Scale My Recipe&rdquo; to update calculations.</span>
+          </div>
+
+          <!-- Empty State -->
+          <div id="emptyState" class="empty-results-box">
+            <div class="empty-illustration" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                <line x1="6" y1="1" x2="6" y2="4"></line>
+                <line x1="10" y1="1" x2="10" y2="4"></line>
+                <line x1="14" y1="1" x2="14" y2="4"></line>
+              </svg>
+            </div>
+            <h3>Kitchen Ready</h3>
+            <p>Enter your original recipe specifications and serving goal, then scale with one click.</p>
+          </div>
+
+          <!-- Scaled Result Content -->
+          <div id="resultContent" class="results-payload" aria-live="polite">
+            <div class="dish-hero-summary">
+              <div id="resultDishName" class="result-dish-heading"></div>
+              <div class="result-tags-row">
+                <span id="resultMultiplierTag" class="tag-multiplier"></span>
+                <span id="resultServingsText" class="tag-servings"></span>
+              </div>
+            </div>
+
+            <!-- Dynamic Scaled Ingredients Checklist -->
+            <ul id="scaledItemsList" class="scaled-items-list"></ul>
+
+            <!-- Practical Actions Deck -->
+            <div class="results-actions-deck">
+              <button type="button" id="btnCopyRecipe" class="btn-action-outline">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy Recipe</span>
+              </button>
+              <button type="button" id="btnResetForm" class="btn-action-outline btn-action-reset">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="1 4 1 10 7 10"></polyline>
+                  <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                </svg>
+                <span>Reset All</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Supporting Dashboard Cards -->
+        <div class="supporting-stack">
+          <!-- Quick Serving Guide -->
+          <div class="widget-card">
+            <div class="widget-header">
+              <span>Quick Serving Guide</span>
+              <span class="card-chip">Fast Presets</span>
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.85rem;">
+              Click to instantly set your desired guest count:
+            </p>
+            <div class="quick-serving-buttons">
+              <button type="button" class="quick-serve-btn" data-servings="2">
+                2 <span>Guests</span>
+              </button>
+              <button type="button" class="quick-serve-btn" data-servings="4">
+                4 <span>Family</span>
+              </button>
+              <button type="button" class="quick-serve-btn" data-servings="6">
+                6 <span>Dinner</span>
+              </button>
+              <button type="button" class="quick-serve-btn" data-servings="8">
+                8 <span>Feast</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Kitchen Notes Card -->
+          <div class="widget-card">
+            <div class="widget-header">
+              <span>Your Kitchen Notes</span>
+              <span class="card-chip">Saved Locally</span>
+            </div>
+            <textarea 
+              id="kitchenNotesInput" 
+              class="notes-textarea" 
+              placeholder="e.g. Reduce salt slightly if using salted butter; simmer sauce for 15 mins..."
+            ></textarea>
+            <div class="notes-status-row">
+              <span id="notesSavedStatus">Autosaved to browser</span>
+              <button type="button" id="btnSaveNotes" class="btn-save-note">Save Note</button>
+            </div>
+          </div>
+
+          <!-- Cooking Tip of the Day -->
+          <div class="widget-card">
+            <div class="widget-header">
+              <span>Cooking Tip of the Day</span>
+              <button type="button" id="btnNextTip" class="tip-refresh-btn">Next Tip &rarr;</button>
+            </div>
+            <div id="tipContentBox" class="tip-box">
+              When scaling garlic and intense spices, scale up by 75% first and taste before adding the full scaled proportion.
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="studio-footer">
+      <p>RecipeRatio Studio &mdash; The Creative Food &amp; Recipe Scaler</p>
+      <p>Zero tracking, works 100% offline in your browser. All ratios computed locally.</p>
+    </footer>
+  </div>
+
+  <!-- Toast Notification Pill -->
+  <div id="toastPill" class="toast-pill" role="status" aria-live="polite">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="toastMessage">Scaled recipe copied to clipboard!</span>
+  </div>
+
+</body>
+</html>
